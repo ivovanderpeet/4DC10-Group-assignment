@@ -6,14 +6,14 @@ const real  arrive = 70.0,             # inter arrival time of requests
       int   number_of_orders = 10000;  # the number of orders to process
 
 proc Generator(chan! tote a):
-  .....;
-  .....;
+  dist int d_col =  uniform(0, depth);
+  dist real d_arr = exponential(arrive);
   tote x;
   while true:
     x.entrytime = time;
-    x.column = .....;
+    x.column = sample d_col;
     a!x;
-    delay .....;
+    delay sample d_arr;
   end
 end
 
