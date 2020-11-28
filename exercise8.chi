@@ -1,0 +1,64 @@
+type tote = tuple(real entrytime;
+                  int  tier);
+
+const int  bc = 1,                    # buffer capacity
+      int  Level = 2,                 # the number of tiers
+      real ll = 2.0,                  # time to load/unload the lift
+      real dl = 0.8,                  # unit height clearance
+      real vmaxl = 5.0,               # maximum velocity of lift
+      real al = 7.0;                  # acceleration/deceleration of lift
+
+proc Generator(chan! tote a; int level):
+  list real delays=[1.0*level, 10.0, 100.0, 100.0];
+  while size(delays)>0:
+    delay delays[0];
+    delays=delays[1:];
+    a!(time,level);
+    writeln("Generator %d: Sending tote to Buffer completed at time %3.1f",level,time)
+  end;
+  delay(100.0)
+end
+
+proc Buffer(list(Level) chan? tote a; chan! tote b; chan! int c):
+  tote x;
+  list tote xs;
+  list(Level) int n;
+  while true:
+    select
+      unwind j in range(Level):
+        n[j] < bc, a[j]?x:
+          xs = xs + [x]; n[j] = n[j] + 1
+      end
+    alt
+      not empty(xs), c!xs[0].tier:
+        pass
+    alt
+      not empty(xs), b!xs[0]:
+        .....
+    end
+  end
+end
+
+proc Lift(chan? tote a; chan? int b; chan! tote c):
+  tote x;
+  .....
+  .....
+  .....
+  .....
+  .....
+end
+
+proc Exit(chan? tote a):
+  tote x;
+  while true:
+    a?x;
+    writeln("Exit:        Receiving tote from Lift completed at time %3.1f",time);
+  end
+end
+
+model M():
+  list(Level) chan tote a;
+  chan tote b,d;
+  chan int c;
+  run Generator(a[0],0), Generator(a[1],1), Buffer(a,b,c), Lift(b,c,d), Exit(d)
+end

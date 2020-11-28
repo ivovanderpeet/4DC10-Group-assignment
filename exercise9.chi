@@ -1,0 +1,105 @@
+type tote = tuple(real entrytime;
+                  int column;
+                  int  tier);
+
+const real lv = 3.0,                   # time to load/unload the vehicle
+      real dv = 0.5,                   # unit width clearance
+      real vmaxv = 1.5,                # maximum velocity of the vehicle
+      real av = 1.0,                   # acceleration/deceleration of the vehicle
+      real ll = 2.0,                   # time to load/unload the lift
+      real dl = 0.8,                   # unit height clearance
+      real vmaxl = 5.0,                # maximum velocity of lift
+      real al = 7.0,                   # acceleration/deceleration of lift
+      int  bc = 1,                     # buffer capacity
+      real arrive = 70.0,              # inter arrival time of requests
+      int  Level = 9,                  # the number of tiers
+      int  depth  = 55,                # the number of columns
+      int  number_of_orders = 100000;  # the number of orders to process
+
+proc Generator(chan! tote a; int Tier):
+  .....
+  .....
+  tote x;
+  while true:
+    x.entrytime = time;
+    x.column = .....
+    x.tier = .....
+    a!x;
+    delay .....
+  end
+end
+
+proc Demand_Buffer(chan? tote a; chan! tote b):
+  tote x;
+  list tote xs;
+  .....
+  .....
+  .....
+  .....
+  .....
+end
+
+proc Vehicle(chan? tote a; chan! tote b):
+  tote x;
+  .....
+  .....
+  .....
+  .....
+  .....
+end
+
+proc Buffer(list(Level) chan? tote a; chan! tote b; chan! int c):
+  tote x;
+  list tote xs;
+  list(Level) int n;
+  while true:
+    select
+      unwind j in range(Level):
+        n[j] < bc, a[j]?x:
+          xs = xs + [x]; n[j] = n[j] + 1
+      end
+    alt
+      not empty(xs), c!xs[0].tier:
+        pass
+    alt
+      not empty(xs), b!xs[0]:
+        .....
+    end
+  end
+end
+
+proc Lift(chan? tote a; chan? int b; chan! tote c):
+  tote x;
+  .....
+  .....
+  .....
+  .....
+  .....
+end
+
+proc Exit(chan? tote a):
+  tote x;
+  real mphi;
+  for i in range(1,number_of_orders+1):
+    a?x;
+    mphi = (i - 1) / i * mphi + (time - x.entrytime) / i;
+    write("tote = %6d; Entrytime = %10.4f; Tier = %2d; Column = %2d; Mean throughput = %8.6f; Mean flowtime = %6.4f\n",
+           i         , x.entrytime       , x.tier    , x.column    , i / time               , mphi );
+  end
+end
+
+proc GDV(chan! tote c; int Tier):
+  chan tote a,b;
+  run Generator(a, Tier), Demand_Buffer(a, b), Vehicle(b, c);
+end
+
+model M():
+  list(Level) chan tote a;
+  chan tote b,d;
+  chan int c;
+  run
+    unwind Tier in range(Level):
+      GDV(a[Tier], Tier),
+    end,
+    Buffer(a,b,c), Lift(b,c,d), Exit(d)
+end

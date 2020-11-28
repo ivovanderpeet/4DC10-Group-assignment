@@ -1,0 +1,44 @@
+type tote = tuple(real entrytime;
+                  int  column);
+
+const real  arrive = 70.0,             # inter arrival time of requests
+      int   depth  = 55,               # the number of columns
+      int   number_of_orders = 10000;  # the number of orders to process
+
+proc Generator(chan! tote a):
+  .....;
+  .....;
+  tote x;
+  while true:
+    x.entrytime = time;
+    x.column = .....;
+    a!x;
+    delay .....;
+  end
+end
+
+proc Demand_Buffer(chan? tote a; chan! tote b):
+  tote x;
+  list tote xs;
+  .....
+  .....
+  .....
+  .....
+  .....
+end
+
+proc Exit(chan? tote a):
+  tote x;
+  real mphi;
+  for i in range(1, number_of_orders + 1):
+    a?x;
+    mphi = (i - 1) / i * mphi + (time - x.entrytime) / i;
+    write("tote = %d; Entrytime = %10.4f; Column = %2d; Mean throughput = %8.6f; Mean flowtime = %6.4f\n",
+           i        , x.entrytime       , x.column   , i / time               , mphi );
+  end
+end
+
+model M():
+  chan tote a,b;
+  run Generator(a), Demand_Buffer(a,b), Exit(b)
+end
