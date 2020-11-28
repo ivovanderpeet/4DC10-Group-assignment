@@ -3,7 +3,7 @@ type tote = tuple(real entrytime;
 
 const real  arrive = 70.0,             # inter arrival time of requests
       int   depth  = 55,               # the number of columns
-      int   number_of_orders = 9999;  # the number of orders to process
+      int   number_of_orders = 10000;  # the number of orders to process
 
 proc Generator(chan! tote a):
   dist int d_col =  uniform(0, depth);
