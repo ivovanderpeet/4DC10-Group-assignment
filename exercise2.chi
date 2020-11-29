@@ -20,11 +20,13 @@ end
 proc Demand_Buffer(chan? tote a; chan! tote b):
   tote x;
   list tote xs;
-  .....
-  .....
-  .....
-  .....
-  .....
+  while true:
+    select a?x:
+      xs = xs + [x]
+    alt size(xs)>0, b!xs[0]:
+      xs = xs [1:]
+    end
+  end
 end
 
 proc Exit(chan? tote a):
