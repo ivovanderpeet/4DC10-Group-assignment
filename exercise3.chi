@@ -31,11 +31,11 @@ end
 
 proc Vehicle(chan? tote a; chan! tote b):
   tote x;
-  .....
-  .....
-  .....
-  .....
-  .....
+    while true:
+    a?x;
+    delay 40.0;
+    b!x
+  end
 end
 
 proc Exit(chan? tote a):
