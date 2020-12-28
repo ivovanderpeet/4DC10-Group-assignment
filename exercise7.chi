@@ -9,6 +9,7 @@ proc Generator(chan! tote a; int level):
   list real delays=[1.0*level, 10.0, 100.0, 100.0];
   while size(delays)>0:
     delay delays[0];
+    writeln("Generator %d: Generated tote completed at time %3.1f",level,time);
     delays=delays[1:];
     a!(time,level);
     writeln("Generator %d: Sending tote to Buffer completed at time %3.1f",level,time)
@@ -31,18 +32,19 @@ proc Buffer(list(Level) chan? tote a; chan! tote b; chan! int c):
         pass
     alt
       not empty(xs), b!xs[0]:
-        .....
+        n[xs[0].tier] = n[xs[0].tier] - 1; xs = xs[1:];
     end
   end
 end
 
 proc Lift(chan? tote a; chan? int b; chan! tote c):
   tote x;
-  .....
-  .....
-  .....
-  .....
-  .....
+  while true:
+    b?x.tier; delay 23; delay ll;
+    a?x;
+    writeln("Lift:        Receiving tote from buffer %d completed at time %3.1f",x.tier, time);
+    delay 23; delay ll; c!x;
+  end
 end
 
 proc Exit(chan? tote a):
