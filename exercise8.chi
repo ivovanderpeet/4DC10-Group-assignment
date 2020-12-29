@@ -34,18 +34,29 @@ proc Buffer(list(Level) chan? tote a; chan! tote b; chan! int c):
         pass
     alt
       not empty(xs), b!xs[0]:
-        .....
+        n[xs[0].tier] = n[xs[0].tier] - 1; xs = xs[1:];
     end
   end
 end
 
 proc Lift(chan? tote a; chan? int b; chan! tote c):
   tote x;
-  .....
-  .....
-  .....
-  .....
-  .....
+    while true:
+    b?x.tier;
+        if x.tier < 2:
+           delay 2*sqrt((dl*(x.tier + 1))/al) + ll;
+        else:
+           delay ((2*dl*(x.tier + 1)*al)/vmaxl - 2*vmaxl + 2*vmaxl/al) + ll;
+        end
+    a?x;
+    writeln("Lift:        Receiving tote from buffer %d completed at time %3.1f",x.tier, time);
+        if x.tier < 2:
+           delay 2*sqrt((dl*(x.tier + 1))/al) + ll;
+        else:
+           delay ((2*dl*(x.tier + 1)*al)/vmaxl - 2*vmaxl + 2*vmaxl/al) + ll;
+        end
+    c!x
+  end
 end
 
 proc Exit(chan? tote a):
