@@ -36,13 +36,13 @@ end
 proc Vehicle(chan? tote a; chan! tote b):
   tote x;
     while true:
-    a?x;
+        a?x;
         if x.column < 4:
            delay 4*sqrt((dv*(x.column + 1))/av) + 2*lv;
         else:
-           delay 2*((2*dv*(x.column + 1)*av)/vmaxv - 2*vmaxv + 2*vmaxv/av) + 2*lv;
+           delay 2*vmaxv/av + (x.column + 1)/vmaxv - vmaxv/av + lv;
         end
-    b!x
+        b!x
   end
 end
 
