@@ -17,35 +17,41 @@ const real lv = 3.0,                   # time to load/unload the vehicle
       int  number_of_orders = 100000;  # the number of orders to process
 
 proc Generator(chan! tote a; int Tier):
-  .....
-  .....
+  dist int d_col =  uniform(0, depth);
+  dist real d_arr = exponential(arrive);
   tote x;
   while true:
     x.entrytime = time;
-    x.column = .....
-    x.tier = .....
+    x.column = sample d_col;
+    x.tier = Tier;
     a!x;
-    delay .....
+    delay sample d_arr;
   end
 end
 
 proc Demand_Buffer(chan? tote a; chan! tote b):
   tote x;
   list tote xs;
-  .....
-  .....
-  .....
-  .....
-  .....
+  while true:
+    select a?x:
+      xs = xs + [x]
+    alt size(xs)>0, b!xs[0]:
+      xs = xs [1:]
+    end
+  end
 end
 
 proc Vehicle(chan? tote a; chan! tote b):
   tote x;
-  .....
-  .....
-  .....
-  .....
-  .....
+    while true:
+    a?x;
+        if x.column < 4:
+           delay 4*sqrt((dv*(x.column + 1))/av) + 2*lv;
+        else:
+           delay 2*((2*dv*(x.column + 1)*av)/vmaxv - 2*vmaxv + 2*vmaxv/av) + 2*lv;
+        end
+    b!x
+  end
 end
 
 proc Buffer(list(Level) chan? tote a; chan! tote b; chan! int c):
@@ -63,18 +69,32 @@ proc Buffer(list(Level) chan? tote a; chan! tote b; chan! int c):
         pass
     alt
       not empty(xs), b!xs[0]:
-        .....
+        n[xs[0].tier] = n[xs[0].tier] - 1; xs = xs[1:];
     end
   end
 end
 
 proc Lift(chan? tote a; chan? int b; chan! tote c):
   tote x;
-  .....
-  .....
-  .....
-  .....
-  .....
+    while true:
+        b?x.tier;
+        #writeln("Tier is %s " ,x.tier);
+        delay x.tier;
+        if x.tier < 2:
+           delay 2*sqrt((dl*(x.tier + 1))/al) + ll;
+        else:
+           delay ((2*dl*(x.tier + 1)*al)/vmaxl - 2*vmaxl + 2*vmaxl/al) + ll;
+        end
+        a?x;
+        delay x.tier;
+        #writeln("Tier is %s " ,x.tier);
+        if x.tier < 2:
+           delay 2*sqrt((dl*(x.tier + 1))/al) + ll;
+        else:
+           delay ((2*dl*(x.tier + 1)*al)/vmaxl - 2*vmaxl + 2*vmaxl/al) + ll;
+        end
+    c!x
+  end
 end
 
 proc Exit(chan? tote a):
