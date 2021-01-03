@@ -12,7 +12,7 @@ const real lv = 3.0,                   # time to load/unload the vehicle
       real al = 7.0,                   # acceleration/deceleration of lift
       int  bc = 1,                     # buffer capacity
       real arrive = 70.0,              # inter arrival time of requests
-      int  Level = 2,                  # the number of tiers
+      int  Level = 9,                  # the number of tiers
       int  depth  = 55,                # the number of columns
       int  number_of_orders = 100000;  # the number of orders to process
 
@@ -44,13 +44,13 @@ end
 proc Vehicle(chan? tote a; chan! tote b):
   tote x;
     while true:
-    a?x;
+        a?x;
         if x.column < 4:
            delay 4*sqrt((dv*(x.column + 1))/av) + 2*lv;
         else:
-           delay 2*((2*dv*(x.column + 1)*av)/vmaxv - 2*vmaxv + 2*vmaxv/av) + 2*lv;
+           delay 2*vmaxv/av + (x.column + 1)/vmaxv - vmaxv/av + lv;
         end
-    b!x
+        b!x
   end
 end
 
@@ -78,24 +78,18 @@ proc Lift(chan? tote a; chan? int b; chan! tote c):
   tote x;
     while true:
         b?x.tier;
-        #writeln("Tier is %s " ,x.tier);
-        delay x.tier;
         if x.tier < 4:
            delay 2*sqrt((dl*(x.tier + 1))/al) + ll;
         else:
-           #delay ((2*dl*(x.tier + 1)*al)/vmaxl - 2*vmaxl + 2*vmaxl/al) + ll;
            delay 2*vmaxl/al + (x.tier + 1)/vmaxl - vmaxl/al + ll;
         end
         a?x;
-        delay x.tier;
-        #writeln("Tier is %s " ,x.tier);
         if x.tier < 4:
            delay 2*sqrt((dl*(x.tier + 1))/al) + ll;
         else:
-           #delay ((2*dl*(x.tier + 1)*al)/vmaxl - 2*vmaxl + 2*vmaxl/al) + ll;
            delay 2*vmaxl/al + (x.tier + 1)/vmaxl - vmaxl/al + ll;
         end
-    c!x
+        c!x
   end
 end
 
