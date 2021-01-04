@@ -48,7 +48,7 @@ proc Vehicle(chan? tote a; chan! tote b):
         if x.column < 4:
            delay 4*sqrt((dv*(x.column + 1))/av) + 2*lv;
         else:
-           delay 2*(2*vmaxv/av + (x.column + 1)/vmaxv - vmaxv/av + lv);
+           delay 2*(2*vmaxv/av + (dv*(x.column + 1))/vmaxv - vmaxv/av + lv);
         end
         b!x
   end
@@ -81,13 +81,13 @@ proc Lift(chan? tote a; chan? int b; chan! tote c):
         if x.tier < 4:
            delay 2*sqrt((dl*(x.tier + 1))/al) + ll;
         else:
-           delay 2*vmaxl/al + (x.tier + 1)/vmaxl - vmaxl/al + ll;
+           delay 2*vmaxl/al + (dl*(x.tier + 1))/vmaxl - vmaxl/al + ll;
         end
         a?x;
         if x.tier < 4:
            delay 2*sqrt((dl*(x.tier + 1))/al) + ll;
         else:
-           delay 2*vmaxl/al + (x.tier + 1)/vmaxl - vmaxl/al + ll;
+           delay 2*vmaxl/al + (dl*(x.tier + 1))/vmaxl - vmaxl/al + ll;
         end
         c!x
   end
