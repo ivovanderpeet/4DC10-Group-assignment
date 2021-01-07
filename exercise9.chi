@@ -93,22 +93,6 @@ proc Lift(chan? tote a; chan? int b; chan! tote c):
   end
 end
 
-func real mean(list real xs):
-    real sum;
-    for x in xs:
-        sum = sum + x
-    end;
-    return sum / size(xs)
-end
-
-func real stdv(list real xs):
-    real sqdiff;
-    for x in xs:
-        sqdiff = sqdiff + (x - mean(xs))^2
-    end;
-    return sqrt(sqdiff/number_of_orders)
-end
-
 proc Exit(chan? tote a):
   tote x;
   real mphi;
@@ -123,11 +107,6 @@ proc Exit(chan? tote a):
     avgthrough[i-1] = i/time;
     avgflow[i-1] = mphi;
   end
-  writeln("Mean average throughput = %8.6f", mean(avgthrough));
-  writeln("Stdv average throughput = %8.6f", stdv(avgthrough));
-  writeln("Mean average flow time =  %6.4f", mean(avgflow));
-  writeln("Stdv average flow time =  %6.4f", stdv(avgflow));
-
 end
 
 proc GDV(chan! tote c; int Tier):
