@@ -94,6 +94,7 @@ proc Lift(chan? tote a; chan? int b; chan! tote c):
 end
 
 proc Exit(chan? tote a):
+
   tote x;
   real sumthrough;
   real sumflow;
@@ -112,31 +113,33 @@ proc Exit(chan? tote a):
 #     write("tote = %6d; Entrytime = %10.4f; Tier = %2d; Column = %2d; Mean throughput = %8.6f; Mean flowtime = %6.4f\n",
 #            i         , x.entrytime       , x.tier    , x.column    , i / time               , mphi );
 
-    avgthrough[i-1] = i/time;
-    avgflow[i-1] = mphi;
-  end
-    avgthroughput = avgthrough[number_of_orders-1];
-    avgflowtime      = avgflow[number_of_orders-1];
-  for j in range(1,number_of_orders+1):
-    variancesthrough [j-1] = (avgthrough[j-1]-avgthroughput)^2;
-    variancesflow    [j-1] = (avgflow[j-1] - avgflowtime)^2
+#     avgthrough[i-1] = i/time;
+#     avgflow[i-1] = mphi;
   end
 
-    for z in variancesthrough:
-    sumthrough = sumthrough + z
-    end
-    varthroughput = sumthrough/ (number_of_orders-1);
-
-
-    for y in variancesflow:
-    sumflow = sumflow + y
-    end
-    varflowtime = sumflow/ (number_of_orders-1);
-
-
-  write("Mean throughput = %8.6f; Std throughput = %8.6f; Lower border = %8.6f; Upper border = %8.6f\nMean flowtime = %6.4f; Std flowtime = %6.4f; Lower border = %8.6f; Upper border = %8.6f\n\n",
-                    avgthrough[number_of_orders-1],  sqrt(varthroughput), avgthrough[number_of_orders-1] -2*sqrt(varthroughput), avgthrough[number_of_orders-1] +2*sqrt(varthroughput)
-                    , mphi, sqrt(varflowtime), mphi-2* sqrt(varflowtime), mphi+2* sqrt(varflowtime))
+    avgthroughput    = (number_of_orders+1)/time;
+    avgflowtime      = mphi;
+    write(" %8.6f , %6.4f;\n", avgthroughput, avgflowtime)
+#   for j in range(1,number_of_orders+1):
+#     variancesthrough [j-1] = (avgthrough[j-1]-avgthroughput)^2;
+#     variancesflow    [j-1] = (avgflow[j-1] - avgflowtime)^2
+#   end
+#
+#     for z in variancesthrough:
+#     sumthrough = sumthrough + z
+#     end
+#     varthroughput = sumthrough/ (number_of_orders-1);
+#
+#
+#     for y in variancesflow:
+#     sumflow = sumflow + y
+#     end
+#     varflowtime = sumflow/ (number_of_orders-1);
+#
+#
+#   write("Mean throughput = %8.6f; Std throughput = %8.6f; Lower border = %8.6f; Upper border = %8.6f\nMean flowtime = %6.4f; Std flowtime = %6.4f; Lower border = %8.6f; Upper border = %8.6f\n\n",
+#                     avgthrough[number_of_orders-1],  sqrt(varthroughput), avgthrough[number_of_orders-1] -2*sqrt(varthroughput), avgthrough[number_of_orders-1] +2*sqrt(varthroughput)
+#                     , mphi, sqrt(varflowtime), mphi-2* sqrt(varflowtime), mphi+2* sqrt(varflowtime))
 
 end
 
