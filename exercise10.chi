@@ -14,7 +14,7 @@ const real lv = 3.0,                   # time to load/unload the vehicle
       real arrive = 70.0,              # inter arrival time of requests
       int  Level = 9,                  # the number of tiers
       int  depth  = 55,                # the number of columns
-      int  number_of_orders = 100;  # the number of orders to process
+      int  number_of_orders = 100000;  # the number of orders to process
 
 proc Generator(chan! tote a; int Tier):
   dist int d_col =  uniform(0, depth);
@@ -94,53 +94,19 @@ proc Lift(chan? tote a; chan? int b; chan! tote c):
 end
 
 proc Exit(chan? tote a):
-
   tote x;
-  real sumthrough;
-  real sumflow;
   real mphi;
-  real varthroughput;
-  real varflowtime;
   real avgthroughput;
   real avgflowtime;
-  list(number_of_orders) real avgthrough;
-  list(number_of_orders) real avgflow;
-  list(number_of_orders) real variancesthrough;
-  list(number_of_orders) real variancesflow;
+
   for i in range(1,number_of_orders+1):
     a?x;
     mphi = (i - 1) / i * mphi + (time - x.entrytime) / i;
-#     write("tote = %6d; Entrytime = %10.4f; Tier = %2d; Column = %2d; Mean throughput = %8.6f; Mean flowtime = %6.4f\n",
-#            i         , x.entrytime       , x.tier    , x.column    , i / time               , mphi );
-
-#     avgthrough[i-1] = i/time;
-#     avgflow[i-1] = mphi;
   end
 
     avgthroughput    = (number_of_orders+1)/time;
     avgflowtime      = mphi;
     write(" %8.6f , %6.4f;\n", avgthroughput, avgflowtime)
-#   for j in range(1,number_of_orders+1):
-#     variancesthrough [j-1] = (avgthrough[j-1]-avgthroughput)^2;
-#     variancesflow    [j-1] = (avgflow[j-1] - avgflowtime)^2
-#   end
-#
-#     for z in variancesthrough:
-#     sumthrough = sumthrough + z
-#     end
-#     varthroughput = sumthrough/ (number_of_orders-1);
-#
-#
-#     for y in variancesflow:
-#     sumflow = sumflow + y
-#     end
-#     varflowtime = sumflow/ (number_of_orders-1);
-#
-#
-#   write("Mean throughput = %8.6f; Std throughput = %8.6f; Lower border = %8.6f; Upper border = %8.6f\nMean flowtime = %6.4f; Std flowtime = %6.4f; Lower border = %8.6f; Upper border = %8.6f\n\n",
-#                     avgthrough[number_of_orders-1],  sqrt(varthroughput), avgthrough[number_of_orders-1] -2*sqrt(varthroughput), avgthrough[number_of_orders-1] +2*sqrt(varthroughput)
-#                     , mphi, sqrt(varflowtime), mphi-2* sqrt(varflowtime), mphi+2* sqrt(varflowtime))
-
 end
 
 proc GDV(chan! tote c; int Tier):
